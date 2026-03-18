@@ -98,11 +98,11 @@ impl Properties {
     }
 
     pub fn add_list<T: ListType>(
-        &mut self,
+        &'_ mut self,
         name: ObsString,
         description: ObsString,
         editable: bool,
-    ) -> ListProp<T> {
+    ) -> ListProp<'_, T> {
         unsafe {
             let raw = obs_properties_add_list(
                 self.pointer,
