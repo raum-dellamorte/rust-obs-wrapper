@@ -2,6 +2,7 @@ use std::rc::Rc;
 use xcb::{get_geometry, translate_coordinates};
 use xcb_util::ewmh::{get_active_window, Connection};
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct WindowSnapshot {
     pub x: f32,
