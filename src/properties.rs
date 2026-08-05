@@ -16,15 +16,57 @@ use obs_sys::{
     obs_path_type_OBS_PATH_FILE_SAVE, obs_properties_add_bool, obs_properties_add_color,
     obs_properties_add_editable_list, obs_properties_add_float, obs_properties_add_float_slider,
     obs_properties_add_font, obs_properties_add_int, obs_properties_add_int_slider,
-    obs_properties_add_list, obs_properties_add_path, obs_properties_add_text,
-    obs_properties_create, obs_properties_destroy, obs_properties_t, obs_property_list_add_float,
+    obs_properties_add_button2, obs_properties_add_list, obs_properties_add_path,
+    obs_properties_add_text, obs_properties_create_param, obs_properties_destroy,
+    obs_properties_get_param, obs_properties_t, obs_property_list_add_float,
     obs_property_list_add_int, obs_property_list_add_string, obs_property_list_insert_float,
     obs_property_list_insert_int, obs_property_list_insert_string, obs_property_list_item_disable,
     obs_property_list_item_remove, obs_property_t, obs_text_type, obs_text_type_OBS_TEXT_DEFAULT,
     obs_text_type_OBS_TEXT_MULTILINE, obs_text_type_OBS_TEXT_PASSWORD, size_t,
 };
 
-use std::{marker::PhantomData, ops::RangeBounds, os::raw::c_int};
+use std::{
+    ffi::c_void,
+    marker::PhantomData,
+    ops::RangeBounds,
+    os::raw::c_int,
+    panic::{catch_unwind, AssertUnwindSafe},
+};
+
+struct ButtonCallback {
+    callback: Box<dyn FnMut() + Send>,
+    refresh_properties: bool,
+}
+
+#[derive(Default)]
+struct PropertiesData {
+    // Each callback has its own allocation so its address remains stable if
+    // this Vec reallocates as more buttons are added.
+    button_callbacks: Vec<Box<ButtonCallback>>,
+}
+
+unsafe extern "C" fn destroy_properties_data(data: *mut c_void) {
+    if !data.is_null() {
+        drop(Box::from_raw(data.cast::<PropertiesData>()));
+    }
+}
+
+unsafe extern "C" fn button_clicked(
+    _properties: *mut obs_properties_t,
+    _property: *mut obs_property_t,
+    data: *mut c_void,
+) -> bool {
+    let Some(callback) = data.cast::<ButtonCallback>().as_mut() else {
+        return false;
+    };
+
+    // A panic must never unwind through OBS's C ABI.
+    if catch_unwind(AssertUnwindSafe(|| (callback.callback)())).is_err() {
+        return false;
+    }
+
+    callback.refresh_properties
+}
 
 native_enum!(TextType, obs_text_type {
     Default => OBS_TEXT_DEFAULT,
@@ -80,7 +122,11 @@ impl Default for Properties {
 impl Properties {
     pub fn new() -> Self {
         unsafe {
-            let ptr = obs_properties_create();
+            let data = Box::into_raw(Box::new(PropertiesData::default()));
+            let ptr = obs_properties_create_param(data.cast(), Some(destroy_properties_data));
+            if ptr.is_null() {
+                drop(Box::from_raw(data));
+            }
             Self::from_raw_unchecked(ptr).expect("obs_properties_create")
         }
     }
@@ -94,6 +140,62 @@ impl Properties {
         unsafe {
             prop.add_to_props(self.pointer, name, description);
         }
+        self
+    }
+
+    /// Adds a button which invokes `callback` when clicked.
+    ///
+    /// The callback is owned by the properties object and is released when
+    /// OBS destroys that object. It should return quickly because OBS invokes
+    /// it from the user-interface thread.
+    pub fn add_button<F>(
+        &mut self,
+        name: ObsString,
+        description: ObsString,
+        callback: F,
+    ) -> &mut Self
+    where
+        F: FnMut() + Send + 'static,
+    {
+        self.add_button_with_refresh(name, description, false, callback)
+    }
+
+    /// Adds a button and optionally asks OBS to rebuild the properties after
+    /// the callback returns.
+    pub fn add_button_with_refresh<F>(
+        &mut self,
+        name: ObsString,
+        description: ObsString,
+        refresh_properties: bool,
+        callback: F,
+    ) -> &mut Self
+    where
+        F: FnMut() + Send + 'static,
+    {
+        unsafe {
+            let data = obs_properties_get_param(self.pointer).cast::<PropertiesData>();
+            let data = data
+                .as_mut()
+                .expect("Properties must own callback storage");
+
+            let mut callback = Box::new(ButtonCallback {
+                callback: Box::new(callback),
+                refresh_properties,
+            });
+            let callback_ptr = (&mut *callback as *mut ButtonCallback).cast();
+
+            let property = obs_properties_add_button2(
+                self.pointer,
+                name.as_ptr(),
+                description.as_ptr(),
+                Some(button_clicked),
+                callback_ptr,
+            );
+            assert!(!property.is_null(), "obs_properties_add_button2");
+
+            data.button_callbacks.push(callback);
+        }
+
         self
     }
 
