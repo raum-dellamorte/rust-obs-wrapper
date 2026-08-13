@@ -27,17 +27,17 @@ use obs_sys::{
     obs_mouse_button_type_MOUSE_RIGHT, obs_source_active, obs_source_enabled,
     obs_source_get_base_height, obs_source_get_base_width, obs_source_get_height,
     obs_source_get_id, obs_source_get_name, obs_source_get_ref, obs_source_get_type,
-    obs_source_get_width, obs_source_info, obs_source_media_ended, obs_source_media_get_duration,
-    obs_source_media_get_state, obs_source_media_get_time, obs_source_media_next,
-    obs_source_media_play_pause, obs_source_media_previous, obs_source_media_restart,
-    obs_source_media_set_time, obs_source_media_started, obs_source_media_stop,
-    obs_source_process_filter_begin, obs_source_process_filter_end,
+    obs_source_get_width, obs_source_get_settings, obs_source_info, obs_source_media_ended,
+    obs_source_media_get_duration, obs_source_media_get_state, obs_source_media_get_time,
+    obs_source_media_next, obs_source_media_play_pause, obs_source_media_previous,
+    obs_source_media_restart, obs_source_media_set_time, obs_source_media_started,
+    obs_source_media_stop, obs_source_process_filter_begin, obs_source_process_filter_end,
     obs_source_process_filter_tech_end, obs_source_release, obs_source_set_enabled,
     obs_source_set_name, obs_source_showing, obs_source_skip_video_filter, obs_source_t,
     obs_source_type, obs_source_type_OBS_SOURCE_TYPE_FILTER, obs_source_type_OBS_SOURCE_TYPE_INPUT,
     obs_source_type_OBS_SOURCE_TYPE_SCENE, obs_source_type_OBS_SOURCE_TYPE_TRANSITION,
-    obs_source_update, OBS_SOURCE_AUDIO, OBS_SOURCE_CONTROLLABLE_MEDIA, OBS_SOURCE_INTERACTION,
-    OBS_SOURCE_VIDEO,
+    obs_source_update, obs_source_update_properties, OBS_SOURCE_AUDIO, OBS_SOURCE_CONTROLLABLE_MEDIA,
+    OBS_SOURCE_INTERACTION, OBS_SOURCE_VIDEO,
 };
 
 use super::{
@@ -307,10 +307,31 @@ impl SourceRef {
         }
     }
 
+    /// Get source settings
+    /// 
+    /// Experimental
+    pub fn get_settings(&self) -> DataObj<'_> {
+      unsafe {
+        DataObj::from_raw_unchecked(
+          obs_source_get_settings(self.inner)
+        )
+        .expect("obs_source_get_settings")
+      }
+    }
+
     /// Update the source settings based on a settings context.
     pub fn update_source_settings(&mut self, settings: &mut DataObj) {
         unsafe {
             obs_source_update(self.inner, settings.as_ptr_mut());
+        }
+    }
+
+    /// Update the source properties.
+    /// 
+    /// Experimental
+    pub fn update_source_properties(&mut self) {
+        unsafe {
+            obs_source_update_properties(self.inner);
         }
     }
 }

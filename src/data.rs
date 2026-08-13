@@ -14,8 +14,8 @@ use obs_sys::{
     obs_data_item_numtype, obs_data_item_release, obs_data_item_t, obs_data_number_type,
     obs_data_number_type_OBS_DATA_NUM_DOUBLE, obs_data_number_type_OBS_DATA_NUM_INT,
     obs_data_release, obs_data_set_default_bool, obs_data_set_default_double,
-    obs_data_set_default_int, obs_data_set_default_obj, obs_data_set_default_string, obs_data_t,
-    obs_data_type, obs_data_type_OBS_DATA_ARRAY, obs_data_type_OBS_DATA_BOOLEAN,
+    obs_data_set_default_int, obs_data_set_default_obj, obs_data_set_default_string, obs_data_set_string,
+    obs_data_t, obs_data_type, obs_data_type_OBS_DATA_ARRAY, obs_data_type_OBS_DATA_BOOLEAN,
     obs_data_type_OBS_DATA_NUMBER, obs_data_type_OBS_DATA_OBJECT, obs_data_type_OBS_DATA_STRING,
     size_t,
 };
@@ -285,6 +285,20 @@ impl DataObj<'_> {
         value: impl Into<T>,
     ) {
         unsafe { T::set_default_unchecked(self.as_ptr_mut(), name.into(), value.into()) }
+    }
+
+    /// Sets a String value for the key.
+    /// 
+    /// Experimental
+    pub fn set_string(
+      &mut self,
+      name: impl Into<ObsString>,
+      value: impl Into<ObsString>,
+    ) {
+      let (name, value) = (name.into(), value.into());
+      unsafe {
+        obs_data_set_string(self.as_ptr_mut(), name.as_ptr(), value.as_ptr());
+      }
     }
 
     /// Creates a JSON representation of this object.
