@@ -15,29 +15,20 @@ pub use context::*;
 pub use traits::*;
 
 use obs_sys::{
-    obs_filter_get_target, obs_icon_type, obs_icon_type_OBS_ICON_TYPE_AUDIO_INPUT,
-    obs_icon_type_OBS_ICON_TYPE_AUDIO_OUTPUT, obs_icon_type_OBS_ICON_TYPE_BROWSER,
-    obs_icon_type_OBS_ICON_TYPE_CAMERA, obs_icon_type_OBS_ICON_TYPE_COLOR,
-    obs_icon_type_OBS_ICON_TYPE_CUSTOM, obs_icon_type_OBS_ICON_TYPE_DESKTOP_CAPTURE,
-    obs_icon_type_OBS_ICON_TYPE_GAME_CAPTURE, obs_icon_type_OBS_ICON_TYPE_IMAGE,
-    obs_icon_type_OBS_ICON_TYPE_MEDIA, obs_icon_type_OBS_ICON_TYPE_SLIDESHOW,
-    obs_icon_type_OBS_ICON_TYPE_TEXT, obs_icon_type_OBS_ICON_TYPE_UNKNOWN,
-    obs_icon_type_OBS_ICON_TYPE_WINDOW_CAPTURE, obs_mouse_button_type,
-    obs_mouse_button_type_MOUSE_LEFT, obs_mouse_button_type_MOUSE_MIDDLE,
-    obs_mouse_button_type_MOUSE_RIGHT, obs_source_active, obs_source_enabled,
-    obs_source_get_base_height, obs_source_get_base_width, obs_source_get_height,
-    obs_source_get_id, obs_source_get_name, obs_source_get_ref, obs_source_get_type,
-    obs_source_get_width, obs_source_get_settings, obs_source_info, obs_source_media_ended,
-    obs_source_media_get_duration, obs_source_media_get_state, obs_source_media_get_time,
-    obs_source_media_next, obs_source_media_play_pause, obs_source_media_previous,
-    obs_source_media_restart, obs_source_media_set_time, obs_source_media_started,
-    obs_source_media_stop, obs_source_process_filter_begin, obs_source_process_filter_end,
-    obs_source_process_filter_tech_end, obs_source_release, obs_source_set_enabled,
-    obs_source_set_name, obs_source_showing, obs_source_skip_video_filter, obs_source_t,
-    obs_source_type, obs_source_type_OBS_SOURCE_TYPE_FILTER, obs_source_type_OBS_SOURCE_TYPE_INPUT,
-    obs_source_type_OBS_SOURCE_TYPE_SCENE, obs_source_type_OBS_SOURCE_TYPE_TRANSITION,
-    obs_source_update, obs_source_update_properties, OBS_SOURCE_AUDIO, OBS_SOURCE_CONTROLLABLE_MEDIA,
-    OBS_SOURCE_INTERACTION, OBS_SOURCE_VIDEO,
+    OBS_SOURCE_AUDIO, OBS_SOURCE_CONTROLLABLE_MEDIA, OBS_SOURCE_INTERACTION, OBS_SOURCE_VIDEO,
+    obs_filter_get_target, obs_icon_type, obs_icon_type_OBS_ICON_TYPE_AUDIO_INPUT, obs_icon_type_OBS_ICON_TYPE_AUDIO_OUTPUT,
+    obs_icon_type_OBS_ICON_TYPE_BROWSER, obs_icon_type_OBS_ICON_TYPE_CAMERA, obs_icon_type_OBS_ICON_TYPE_COLOR, obs_icon_type_OBS_ICON_TYPE_CUSTOM,
+    obs_icon_type_OBS_ICON_TYPE_DESKTOP_CAPTURE, obs_icon_type_OBS_ICON_TYPE_GAME_CAPTURE, obs_icon_type_OBS_ICON_TYPE_IMAGE, obs_icon_type_OBS_ICON_TYPE_MEDIA,
+    obs_icon_type_OBS_ICON_TYPE_SLIDESHOW, obs_icon_type_OBS_ICON_TYPE_TEXT, obs_icon_type_OBS_ICON_TYPE_UNKNOWN, obs_icon_type_OBS_ICON_TYPE_WINDOW_CAPTURE,
+    obs_mouse_button_type, obs_mouse_button_type_MOUSE_LEFT, obs_mouse_button_type_MOUSE_MIDDLE, obs_mouse_button_type_MOUSE_RIGHT, obs_source_active,
+    obs_source_enabled, obs_source_get_base_height, obs_source_get_base_width, obs_source_get_height, obs_source_get_id, obs_source_get_name, obs_source_get_ref,
+    obs_source_get_settings, obs_source_get_type, obs_source_get_weak_source, obs_source_get_width, obs_source_info, obs_source_media_ended,
+    obs_source_media_get_duration, obs_source_media_get_state, obs_source_media_get_time, obs_source_media_next, obs_source_media_play_pause,
+    obs_source_media_previous, obs_source_media_restart, obs_source_media_set_time, obs_source_media_started, obs_source_media_stop,
+    obs_source_process_filter_begin, obs_source_process_filter_end, obs_source_process_filter_tech_end, obs_source_release, obs_source_set_enabled,
+    obs_source_set_name, obs_source_showing, obs_source_skip_video_filter, obs_source_t, obs_source_type, obs_source_type_OBS_SOURCE_TYPE_FILTER,
+    obs_source_type_OBS_SOURCE_TYPE_INPUT, obs_source_type_OBS_SOURCE_TYPE_SCENE, obs_source_type_OBS_SOURCE_TYPE_TRANSITION, obs_source_update,
+    obs_source_update_properties, obs_weak_source_addref, obs_weak_source_get_source, obs_weak_source_release, obs_weak_source_t,
 };
 
 use super::{
@@ -137,6 +128,14 @@ impl SourceRef {
     /// Return a unique id for the filter
     pub fn id(&self) -> usize {
         self.inner as usize
+    }
+
+    /// Return WeakSourceRef
+    pub fn downgrade(&self) -> WeakSourceRef {
+        let inner = unsafe {
+            obs_source_get_weak_source(self.inner)
+        };
+        WeakSourceRef { inner }
     }
 
     pub fn get_base_width(&self) -> u32 {
@@ -333,6 +332,36 @@ impl SourceRef {
         unsafe {
             obs_source_update_properties(self.inner);
         }
+    }
+}
+
+pub struct WeakSourceRef {
+    inner: *mut obs_weak_source_t,
+}
+
+impl WeakSourceRef {
+    pub fn upgrade(&self) -> Option<SourceRef> {
+        let source = unsafe {
+            obs_weak_source_get_source(self.inner)
+        };
+        unsafe { SourceRef::from_raw_unchecked(source) }
+    }
+}
+
+impl Drop for WeakSourceRef {
+    fn drop(&mut self) {
+        unsafe {
+            obs_weak_source_release(self.inner);
+        }
+    }
+}
+
+impl Clone for WeakSourceRef {
+    fn clone(&self) -> Self {
+        unsafe {
+            obs_weak_source_addref(self.inner);
+        }
+        Self { inner: self.inner }
     }
 }
 
