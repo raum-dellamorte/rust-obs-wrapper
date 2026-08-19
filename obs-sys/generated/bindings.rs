@@ -400,49 +400,10 @@ pub const SIMDE_ARCH_AMD64: u32 = 1000;
 pub const SIMDE_ARCH_X86_MMX: u32 = 1;
 pub const SIMDE_ARCH_X86_SSE: u32 = 1;
 pub const SIMDE_ARCH_X86_SSE2: u32 = 1;
-pub const _MM_HINT_ET0: u32 = 7;
-pub const _MM_HINT_ET1: u32 = 6;
-pub const _MM_HINT_T0: u32 = 3;
-pub const _MM_HINT_T1: u32 = 2;
-pub const _MM_HINT_T2: u32 = 1;
-pub const _MM_HINT_NTA: u32 = 0;
-pub const _CMP_EQ_OQ: u32 = 0;
-pub const _CMP_LT_OS: u32 = 1;
-pub const _CMP_LE_OS: u32 = 2;
-pub const _CMP_UNORD_Q: u32 = 3;
-pub const _CMP_NEQ_UQ: u32 = 4;
-pub const _CMP_NLT_US: u32 = 5;
-pub const _CMP_NLE_US: u32 = 6;
-pub const _CMP_ORD_Q: u32 = 7;
-pub const _MM_EXCEPT_INVALID: u32 = 1;
-pub const _MM_EXCEPT_DENORM: u32 = 2;
-pub const _MM_EXCEPT_DIV_ZERO: u32 = 4;
-pub const _MM_EXCEPT_OVERFLOW: u32 = 8;
-pub const _MM_EXCEPT_UNDERFLOW: u32 = 16;
-pub const _MM_EXCEPT_INEXACT: u32 = 32;
-pub const _MM_EXCEPT_MASK: u32 = 63;
-pub const _MM_MASK_INVALID: u32 = 128;
-pub const _MM_MASK_DENORM: u32 = 256;
-pub const _MM_MASK_DIV_ZERO: u32 = 512;
-pub const _MM_MASK_OVERFLOW: u32 = 1024;
-pub const _MM_MASK_UNDERFLOW: u32 = 2048;
-pub const _MM_MASK_INEXACT: u32 = 4096;
-pub const _MM_MASK_MASK: u32 = 8064;
-pub const _MM_ROUND_NEAREST: u32 = 0;
-pub const _MM_ROUND_DOWN: u32 = 8192;
-pub const _MM_ROUND_UP: u32 = 16384;
-pub const _MM_ROUND_TOWARD_ZERO: u32 = 24576;
-pub const _MM_ROUND_MASK: u32 = 24576;
-pub const _MM_FLUSH_ZERO_MASK: u32 = 32768;
-pub const _MM_FLUSH_ZERO_ON: u32 = 32768;
-pub const _MM_FLUSH_ZERO_OFF: u32 = 0;
-pub const _MM_DENORMALS_ZERO_ON: u32 = 64;
-pub const _MM_DENORMALS_ZERO_OFF: u32 = 0;
-pub const _MM_DENORMALS_ZERO_MASK: u32 = 64;
-pub const SIMDE_NATURAL_VECTOR_SIZE: u32 = 128;
-pub const SIMDE_NATURAL_FLOAT_VECTOR_SIZE: u32 = 128;
-pub const SIMDE_NATURAL_INT_VECTOR_SIZE: u32 = 128;
-pub const SIMDE_NATURAL_DOUBLE_VECTOR_SIZE: u32 = 128;
+pub const SIMDE_NATURAL_VECTOR_SIZE: u32 = 0;
+pub const SIMDE_NATURAL_FLOAT_VECTOR_SIZE: u32 = 0;
+pub const SIMDE_NATURAL_INT_VECTOR_SIZE: u32 = 0;
+pub const SIMDE_NATURAL_DOUBLE_VECTOR_SIZE: u32 = 0;
 pub const SIMDE_MATH_H: u32 = 1;
 pub const SIMDE_MATH_PI: f64 = 3.141592653589793;
 pub const SIMDE_MATH_PI_OVER_180: f64 = 0.017453292519943295;
@@ -593,6 +554,7 @@ pub const SIMDE_FLOAT16_API_FP16: u32 = 4;
 pub const SIMDE_FLOAT16_API: u32 = 2;
 pub const SIMDE_FLOAT16_IS_SCALAR: u32 = 1;
 pub const SIMDE_MM_ROUND_MASK: u32 = 24576;
+pub const _MM_ROUND_MASK: u32 = 24576;
 pub const SIMDE_MM_FROUND_TO_NEAREST_INT: u32 = 0;
 pub const SIMDE_MM_FROUND_TO_NEG_INF: u32 = 1;
 pub const SIMDE_MM_FROUND_TO_POS_INF: u32 = 2;
@@ -625,6 +587,13 @@ pub const SIMDE_MM_EXCEPT_OVERFLOW: u32 = 8;
 pub const SIMDE_MM_EXCEPT_UNDERFLOW: u32 = 16;
 pub const SIMDE_MM_EXCEPT_INEXACT: u32 = 32;
 pub const SIMDE_MM_EXCEPT_MASK: u32 = 63;
+pub const _MM_EXCEPT_INVALID: u32 = 1;
+pub const _MM_EXCEPT_DENORM: u32 = 2;
+pub const _MM_EXCEPT_DIV_ZERO: u32 = 4;
+pub const _MM_EXCEPT_OVERFLOW: u32 = 8;
+pub const _MM_EXCEPT_UNDERFLOW: u32 = 16;
+pub const _MM_EXCEPT_INEXACT: u32 = 32;
+pub const _MM_EXCEPT_MASK: u32 = 63;
 pub const SIMDE_MM_MASK_INVALID: u32 = 128;
 pub const SIMDE_MM_MASK_DENORM: u32 = 256;
 pub const SIMDE_MM_MASK_DIV_ZERO: u32 = 512;
@@ -632,9 +601,19 @@ pub const SIMDE_MM_MASK_OVERFLOW: u32 = 1024;
 pub const SIMDE_MM_MASK_UNDERFLOW: u32 = 2048;
 pub const SIMDE_MM_MASK_INEXACT: u32 = 4096;
 pub const SIMDE_MM_MASK_MASK: u32 = 8064;
+pub const _MM_MASK_INVALID: u32 = 128;
+pub const _MM_MASK_DENORM: u32 = 256;
+pub const _MM_MASK_DIV_ZERO: u32 = 512;
+pub const _MM_MASK_OVERFLOW: u32 = 1024;
+pub const _MM_MASK_UNDERFLOW: u32 = 2048;
+pub const _MM_MASK_INEXACT: u32 = 4096;
+pub const _MM_MASK_MASK: u32 = 8064;
 pub const SIMDE_MM_FLUSH_ZERO_MASK: u32 = 32768;
 pub const SIMDE_MM_FLUSH_ZERO_ON: u32 = 32768;
 pub const SIMDE_MM_FLUSH_ZERO_OFF: u32 = 0;
+pub const _MM_FLUSH_ZERO_MASK: u32 = 32768;
+pub const _MM_FLUSH_ZERO_ON: u32 = 32768;
+pub const _MM_FLUSH_ZERO_OFF: u32 = 0;
 pub const SIMDE_MM_HINT_NTA: u32 = 0;
 pub const SIMDE_MM_HINT_T0: u32 = 1;
 pub const SIMDE_MM_HINT_T1: u32 = 2;
@@ -643,6 +622,14 @@ pub const SIMDE_MM_HINT_ENTA: u32 = 4;
 pub const SIMDE_MM_HINT_ET0: u32 = 5;
 pub const SIMDE_MM_HINT_ET1: u32 = 6;
 pub const SIMDE_MM_HINT_ET2: u32 = 7;
+pub const _MM_HINT_NTA: u32 = 0;
+pub const _MM_HINT_T0: u32 = 1;
+pub const _MM_HINT_T1: u32 = 2;
+pub const _MM_HINT_T2: u32 = 3;
+pub const _MM_HINT_ETNA: u32 = 4;
+pub const _MM_HINT_ET0: u32 = 5;
+pub const _MM_HINT_ET1: u32 = 6;
+pub const _MM_HINT_ET2: u32 = 7;
 pub const MAX_AV_PLANES: u32 = 8;
 pub const MAX_AUDIO_MIXES: u32 = 6;
 pub const MAX_AUDIO_CHANNELS: u32 = 8;
@@ -657,8 +644,8 @@ pub const VIDEO_OUTPUT_FAIL: i32 = -2;
 pub const CALL_PARAM_IN: u32 = 1;
 pub const CALL_PARAM_OUT: u32 = 2;
 pub const LIBOBS_API_MAJOR_VER: u32 = 32;
-pub const LIBOBS_API_MINOR_VER: u32 = 0;
-pub const LIBOBS_API_PATCH_VER: u32 = 4;
+pub const LIBOBS_API_MINOR_VER: u32 = 1;
+pub const LIBOBS_API_PATCH_VER: u32 = 2;
 pub const OBS_DATA_PATH: &[u8; 10] = b"share/obs\0";
 pub const OBS_PLUGIN_PATH: &[u8; 16] = b"lib/obs-plugins\0";
 pub const OBS_PLUGIN_DESTINATION: &[u8; 16] = b"lib/obs-plugins\0";
@@ -1058,7 +1045,7 @@ pub struct __pthread_mutex_s {
     pub __nusers: ::std::os::raw::c_uint,
     pub __kind: ::std::os::raw::c_int,
     pub __spins: ::std::os::raw::c_short,
-    pub __unused: ::std::os::raw::c_short,
+    pub __glibc_reserved: ::std::os::raw::c_short,
     pub __list: __pthread_list_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -1077,8 +1064,8 @@ const _: () = {
         [::std::mem::offset_of!(__pthread_mutex_s, __kind) - 16usize];
     ["Offset of field: __pthread_mutex_s::__spins"]
         [::std::mem::offset_of!(__pthread_mutex_s, __spins) - 20usize];
-    ["Offset of field: __pthread_mutex_s::__unused"]
-        [::std::mem::offset_of!(__pthread_mutex_s, __unused) - 22usize];
+    ["Offset of field: __pthread_mutex_s::__glibc_reserved"]
+        [::std::mem::offset_of!(__pthread_mutex_s, __glibc_reserved) - 22usize];
     ["Offset of field: __pthread_mutex_s::__list"]
         [::std::mem::offset_of!(__pthread_mutex_s, __list) - 24usize];
 };
@@ -6243,59 +6230,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     pub fn vec2_norm(dst: *mut vec2, v: *const vec2);
 }
-pub type __m64 = [::std::os::raw::c_longlong; 1usize];
-pub type __v1di = [::std::os::raw::c_longlong; 1usize];
-pub type __v2si = [::std::os::raw::c_int; 2usize];
-pub type __v4hi = [::std::os::raw::c_short; 4usize];
-pub type __v8qi = [::std::os::raw::c_char; 8usize];
-pub type __v1du = [::std::os::raw::c_ulonglong; 1usize];
-pub type __v2su = [::std::os::raw::c_uint; 2usize];
-pub type __v4hu = [::std::os::raw::c_ushort; 4usize];
-pub type __v8qu = [::std::os::raw::c_uchar; 8usize];
-pub type __v8qs = [::std::os::raw::c_schar; 8usize];
-pub type __m128i = [::std::os::raw::c_longlong; 2usize];
-pub type __v2di = [::std::os::raw::c_longlong; 2usize];
-pub type __v4si = [::std::os::raw::c_int; 4usize];
-pub type __v8hi = [::std::os::raw::c_short; 8usize];
-pub type __v16qi = [::std::os::raw::c_char; 16usize];
-pub type __v4sf = [f32; 4usize];
-pub type __m128 = [f32; 4usize];
-pub type __m128_u = [f32; 4usize];
-pub type __v4su = [::std::os::raw::c_uint; 4usize];
-pub type __v8hu = [::std::os::raw::c_ushort; 8usize];
-pub type __v16qu = [::std::os::raw::c_uchar; 16usize];
-unsafe extern "C" {
-    pub fn _mm_sfence();
-}
-unsafe extern "C" {
-    pub fn _mm_getcsr() -> ::std::os::raw::c_uint;
-}
-unsafe extern "C" {
-    pub fn _mm_setcsr(__i: ::std::os::raw::c_uint);
-}
-pub type __m128d = [f64; 2usize];
-pub type __m128d_u = [f64; 2usize];
-pub type __m128i_u = [::std::os::raw::c_longlong; 2usize];
-pub type __v2df = [f64; 2usize];
-pub type __v2du = [::std::os::raw::c_ulonglong; 2usize];
-pub type __v16qs = [::std::os::raw::c_schar; 16usize];
-pub type __v8hf = [__BindgenFloat16; 8usize];
-pub type __m128h = [__BindgenFloat16; 8usize];
-pub type __m128h_u = [__BindgenFloat16; 8usize];
-pub type __v8bf = u128;
-pub type __m128bh = u128;
-unsafe extern "C" {
-    pub fn _mm_clflush(__p: *const ::std::os::raw::c_void);
-}
-unsafe extern "C" {
-    pub fn _mm_lfence();
-}
-unsafe extern "C" {
-    pub fn _mm_mfence();
-}
-unsafe extern "C" {
-    pub fn _mm_pause();
-}
 pub type simde_int128 = i128;
 pub type simde_uint128 = u128;
 pub type simde_float32 = f32;
@@ -7215,7 +7149,6 @@ pub union simde__m64_private {
     pub f32_: [simde_float32; 2usize],
     pub i32f: [int_fast32_t; 1usize],
     pub u32f: [uint_fast32_t; 1usize],
-    pub n: __m64,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -7243,8 +7176,6 @@ const _: () = {
         [::std::mem::offset_of!(simde__m64_private, i32f) - 0usize];
     ["Offset of field: simde__m64_private::u32f"]
         [::std::mem::offset_of!(simde__m64_private, u32f) - 0usize];
-    ["Offset of field: simde__m64_private::n"]
-        [::std::mem::offset_of!(simde__m64_private, n) - 0usize];
 };
 impl Default for simde__m64_private {
     fn default() -> Self {
@@ -7255,7 +7186,8 @@ impl Default for simde__m64_private {
         }
     }
 }
-pub type simde__m64 = __m64;
+pub type simde__m64 = [i32; 2usize];
+pub type __m64 = simde__m64;
 pub type simde_float16 = __BindgenFloat16;
 #[repr(C)]
 #[repr(align(16))]
@@ -7277,7 +7209,6 @@ pub union simde__m128_private {
     pub u32f: [uint_fast32_t; 2usize],
     pub m64_private: [simde__m64_private; 2usize],
     pub m64: [simde__m64; 2usize],
-    pub n: __m128,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -7315,8 +7246,6 @@ const _: () = {
         [::std::mem::offset_of!(simde__m128_private, m64_private) - 0usize];
     ["Offset of field: simde__m128_private::m64"]
         [::std::mem::offset_of!(simde__m128_private, m64) - 0usize];
-    ["Offset of field: simde__m128_private::n"]
-        [::std::mem::offset_of!(simde__m128_private, n) - 0usize];
 };
 impl Default for simde__m128_private {
     fn default() -> Self {
@@ -7327,7 +7256,8 @@ impl Default for simde__m128_private {
         }
     }
 }
-pub type simde__m128 = __m128;
+pub type simde__m128 = [simde_float32; 4usize];
+pub type __m128 = simde__m128;
 pub const SIMDE_MM_ROUND_NEAREST: _bindgen_ty_5 = 0;
 pub const SIMDE_MM_ROUND_DOWN: _bindgen_ty_5 = 8192;
 pub const SIMDE_MM_ROUND_UP: _bindgen_ty_5 = 16384;
@@ -7354,7 +7284,6 @@ pub union simde__m128i_private {
     pub u32f: [uint_fast32_t; 2usize],
     pub m64_private: [simde__m64_private; 2usize],
     pub m64: [simde__m64; 2usize],
-    pub n: __m128i,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -7394,8 +7323,6 @@ const _: () = {
         [::std::mem::offset_of!(simde__m128i_private, m64_private) - 0usize];
     ["Offset of field: simde__m128i_private::m64"]
         [::std::mem::offset_of!(simde__m128i_private, m64) - 0usize];
-    ["Offset of field: simde__m128i_private::n"]
-        [::std::mem::offset_of!(simde__m128i_private, n) - 0usize];
 };
 impl Default for simde__m128i_private {
     fn default() -> Self {
@@ -7424,7 +7351,6 @@ pub union simde__m128d_private {
     pub u32f: [uint_fast32_t; 2usize],
     pub m64_private: [simde__m64_private; 2usize],
     pub m64: [simde__m64; 2usize],
-    pub n: __m128d,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -7458,8 +7384,6 @@ const _: () = {
         [::std::mem::offset_of!(simde__m128d_private, m64_private) - 0usize];
     ["Offset of field: simde__m128d_private::m64"]
         [::std::mem::offset_of!(simde__m128d_private, m64) - 0usize];
-    ["Offset of field: simde__m128d_private::n"]
-        [::std::mem::offset_of!(simde__m128d_private, n) - 0usize];
 };
 impl Default for simde__m128d_private {
     fn default() -> Self {
@@ -7470,8 +7394,10 @@ impl Default for simde__m128d_private {
         }
     }
 }
-pub type simde__m128i = __m128i;
-pub type simde__m128d = __m128d;
+pub type simde__m128i = [i64; 2usize];
+pub type simde__m128d = [simde_float64; 2usize];
+pub type __m128i = simde__m128i;
+pub type __m128d = simde__m128d;
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Copy, Clone)]
@@ -10745,10 +10671,13 @@ pub struct obs_encoder_info {
             received_packet: *mut bool,
         ) -> bool,
     >,
+    #[doc = " Audio encoder only: Returns padding, in samples, that must be skipped at the start of the stream."]
+    pub get_priming_samples:
+        ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void) -> u32>,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of obs_encoder_info"][::std::mem::size_of::<obs_encoder_info>() - 176usize];
+    ["Size of obs_encoder_info"][::std::mem::size_of::<obs_encoder_info>() - 184usize];
     ["Alignment of obs_encoder_info"][::std::mem::align_of::<obs_encoder_info>() - 8usize];
     ["Offset of field: obs_encoder_info::id"]
         [::std::mem::offset_of!(obs_encoder_info, id) - 0usize];
@@ -10794,6 +10723,8 @@ const _: () = {
         [::std::mem::offset_of!(obs_encoder_info, encode_texture) - 160usize];
     ["Offset of field: obs_encoder_info::encode_texture2"]
         [::std::mem::offset_of!(obs_encoder_info, encode_texture2) - 168usize];
+    ["Offset of field: obs_encoder_info::get_priming_samples"]
+        [::std::mem::offset_of!(obs_encoder_info, get_priming_samples) - 176usize];
 };
 impl Default for obs_encoder_info {
     fn default() -> Self {
@@ -14627,6 +14558,9 @@ unsafe extern "C" {
     pub fn obs_transition_get_size(transition: *const obs_source_t, cx: *mut u32, cy: *mut u32);
 }
 unsafe extern "C" {
+    pub fn obs_transition_is_active(transition: *mut obs_source_t) -> bool;
+}
+unsafe extern "C" {
     #[doc = " Enables fixed transitions (videos or specific types of transitions that\n are of fixed duration and linearly interpolated"]
     pub fn obs_transition_enable_fixed(
         transition: *mut obs_source_t,
@@ -15735,6 +15669,9 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " For audio encoders, returns the mixer index"]
     pub fn obs_encoder_get_mixer_index(encoder: *const obs_encoder_t) -> usize;
+}
+unsafe extern "C" {
+    pub fn obs_encoder_get_priming_samples(encoder: *const obs_encoder_t) -> u32;
 }
 unsafe extern "C" {
     #[doc = " Sets the preferred video format for a video encoder.  If the encoder can use\n the format specified, it will force a conversion to that format if the\n obs output format does not match the preferred format.\n\n If the format is set to VIDEO_FORMAT_NONE, will revert to the default\n functionality of converting only when absolutely necessary.\n\n If GPU scaling is enabled, conversion will happen on the GPU."]
