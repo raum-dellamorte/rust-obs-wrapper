@@ -21,6 +21,7 @@ fn main() {
   let mut clang_args: Vec<String> = vec![];
 
   if std::env::var("CARGO_CFG_TARGET_OS").map(|s| s.contains("linux") ).unwrap_or(false) {
+    clang_args.push("-I/usr/include".to_string());
     clang_args.push("-I/usr/include/obs".to_string());
   } else if std::env::var("CARGO_CFG_TARGET_OS").map(|s| s.contains("macos") ).unwrap_or(false) {
     #[cfg(target_os = "macos")]
