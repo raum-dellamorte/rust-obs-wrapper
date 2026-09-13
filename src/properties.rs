@@ -4,16 +4,13 @@
 use crate::{native_enum, string::ObsString, wrapper::PtrWrapper};
 use num_traits::{one, Bounded, Float, Num, NumCast, PrimInt, ToPrimitive};
 use obs_sys::{
-    obs_combo_format, obs_combo_format_OBS_COMBO_FORMAT_FLOAT,
-    obs_combo_format_OBS_COMBO_FORMAT_INT, obs_combo_format_OBS_COMBO_FORMAT_INVALID,
-    obs_combo_format_OBS_COMBO_FORMAT_STRING, obs_combo_type,
+    obs_combo_format, obs_combo_format_OBS_COMBO_FORMAT_FLOAT, obs_combo_format_OBS_COMBO_FORMAT_INT,
+    obs_combo_format_OBS_COMBO_FORMAT_INVALID, obs_combo_format_OBS_COMBO_FORMAT_STRING, obs_combo_type,
     obs_combo_type_OBS_COMBO_TYPE_EDITABLE, obs_combo_type_OBS_COMBO_TYPE_INVALID,
-    obs_combo_type_OBS_COMBO_TYPE_LIST, obs_editable_list_type,
-    obs_editable_list_type_OBS_EDITABLE_LIST_TYPE_FILES,
-    obs_editable_list_type_OBS_EDITABLE_LIST_TYPE_FILES_AND_URLS,
-    obs_editable_list_type_OBS_EDITABLE_LIST_TYPE_STRINGS, obs_path_type,
-    obs_path_type_OBS_PATH_DIRECTORY, obs_path_type_OBS_PATH_FILE,
-    obs_path_type_OBS_PATH_FILE_SAVE, obs_properties_add_bool, obs_properties_add_color,
+    obs_combo_type_OBS_COMBO_TYPE_LIST, obs_editable_list_type, obs_editable_list_type_OBS_EDITABLE_LIST_TYPE_FILES,
+    obs_editable_list_type_OBS_EDITABLE_LIST_TYPE_FILES_AND_URLS, obs_editable_list_type_OBS_EDITABLE_LIST_TYPE_STRINGS,
+    obs_path_type, obs_path_type_OBS_PATH_DIRECTORY, obs_path_type_OBS_PATH_FILE, obs_path_type_OBS_PATH_FILE_SAVE,
+    obs_properties_add_bool, obs_properties_add_color, obs_properties_add_color_alpha,
     obs_properties_add_editable_list, obs_properties_add_float, obs_properties_add_float_slider,
     obs_properties_add_font, obs_properties_add_int, obs_properties_add_int_slider,
     obs_properties_add_button2, obs_properties_add_list, obs_properties_add_path,
@@ -518,6 +515,14 @@ impl ObsProp for ColorProp {
         description: ObsString,
     ) {
         obs_properties_add_color(p, name.as_ptr(), description.as_ptr());
+    }
+}
+
+pub struct ColorAlphaProp;
+
+impl ObsProp for ColorAlphaProp {
+    unsafe fn add_to_props(self, p: *mut obs_properties_t, name: ObsString, description: ObsString) {
+        obs_properties_add_color_alpha(p, name.as_ptr(), description.as_ptr());
     }
 }
 
