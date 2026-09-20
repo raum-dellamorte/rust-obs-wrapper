@@ -19,6 +19,42 @@ fn main() {
   println!("cargo:rustc-link-search=native={}/deps", proj_dir);
 
   let mut clang_args: Vec<String> = vec![];
+  let obs_source_dir = PathBuf::from(&proj_dir).join("obs");
+  let libobs_include = obs_source_dir.join("libobs");
+  let frontend_include = obs_source_dir.join("frontend/api");
+  if !libobs_include.join("obs-module.h").is_file() {
+      panic!(
+          "OBS submodule headers expect at {}. \
+            Run `git submodule update --init --recursive`.",
+          obs_source_dir.display(),
+      );
+  }
+  if !frontend_include.join("obs-frontend-api.h").is_file() {
+      panic!("OBS frontend headers not found under {}.", frontend_include.display());
+  }
+
+  let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+  let bindings_file = out_dir.join("bindings.rs");
+
+  let obs_config_dir = out_dir.join("obs-config");
+  fs::create_dir_all(&obs_config_dir)
+    .expect("Could not create OBS config include directory");
+  fs::write(
+    obs_config_dir.join("obsconfig.h"),
+    r#"#pragma once
+
+#define OBS_DATA_PATH "share/obs"
+#define OBS_PLUGIN_PATH "lib/obs-plugins"
+#define OBS_PLUGIN_DESTINATION "lib/obs-plugins"
+
+#define OBS_RELEASE_CANDIDATE 0
+#define OBS_BETA 0
+"#,
+  )
+    .expect("Could not generate obsconfig.h");
+  clang_args.push(format!("-I{}", obs_config_dir.display()));
+  clang_args.push(format!("-I{}", libobs_include.display()));
+  clang_args.push(format!("-I{}", frontend_include.display()));
 
   if std::env::var("CARGO_CFG_TARGET_OS").map(|s| s.contains("linux") ).unwrap_or(false) {
     // Using cargo zigbuild to restrict glibc to a version compatible with the flatpak
@@ -28,7 +64,6 @@ fn main() {
     // portable library.
     println!("cargo:rerun-if-env-changed=SIMDE_INCLUDE_DIR");
     println!("cargo:rerun-if-changed=/usr/include/simde");
-    clang_args.push("-I/usr/include/obs".to_string());
     let simde_include_root = simde_include_create()
         .unwrap_or_else(|e| panic!("Failed to prepare SIMDe headers: {}", e));
     clang_args.push(format!("-I{}", simde_include_root.display()));
@@ -37,9 +72,7 @@ fn main() {
     #[cfg(target_os = "macos")]
     build_mac::find_mac_obs_lib();
   } else if std::env::var("CARGO_CFG_TARGET_OS").map(|s| s.contains("windows") ).unwrap_or(false) {
-    if std::env::var("HOST").map(|s| s.contains("linux") ).unwrap_or(false) {
-      clang_args.push("-I/usr/include/obs".to_string());
-    } else {
+    if !std::env::var("HOST").map(|s| s.contains("linux") ).unwrap_or(false) {
       #[cfg(windows)]
       build_win::find_windows_obs_lib();
     }
@@ -48,8 +81,6 @@ fn main() {
     clang_args.push("-Wno-error=implicit-function-declaration".into());
     clang_args.push(format!("-I{}/deps", proj_dir));
   }
-
-  let out_path = PathBuf::from(env::var("OUT_DIR").unwrap()).join("bindings.rs");
 
   let builder = bindgen::Builder::default()
     .header("wrapper.h")
@@ -63,9 +94,9 @@ fn main() {
   match builder.generate() {
     Ok(bindings) => {
       bindings
-        .write_to_file(&out_path)
+        .write_to_file(&bindings_file)
         .expect("Couldn't write bindings!");
-      fs::copy(&out_path, "generated/bindings.rs").expect("Could not copy bindings!");
+      fs::copy(&bindings_file, "generated/bindings.rs").expect("Could not copy bindings!");
     }
 
     Err(e) => {
@@ -75,7 +106,7 @@ fn main() {
 
       println!("cargo:warning=Could not find obs headers - using pre-compiled.");
       println!("cargo:warning=This could result in a library that doesn't work.");
-      fs::copy("generated/bindings.rs", out_path).expect("Could not copy bindings!");
+      fs::copy("generated/bindings.rs", bindings_file).expect("Could not copy bindings!");
     }
   }
 }

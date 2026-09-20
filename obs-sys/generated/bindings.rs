@@ -502,6 +502,7 @@ pub struct __BindgenComplex<T> {
 pub struct __BindgenFloat16(pub u16);
 pub const _STDINT_H: u32 = 1;
 pub const _FEATURES_H: u32 = 1;
+pub const __GLIBC__: u32 = 2;
 pub const _DEFAULT_SOURCE: u32 = 1;
 pub const __GLIBC_USE_ISOC2Y: u32 = 0;
 pub const __GLIBC_USE_ISOC23: u32 = 0;
@@ -510,7 +511,7 @@ pub const __USE_ISOC99: u32 = 1;
 pub const __USE_ISOC95: u32 = 1;
 pub const __USE_POSIX_IMPLICITLY: u32 = 1;
 pub const _POSIX_SOURCE: u32 = 1;
-pub const _POSIX_C_SOURCE: u32 = 202405;
+pub const _POSIX_C_SOURCE: u32 = 200809;
 pub const __USE_POSIX: u32 = 1;
 pub const __USE_POSIX2: u32 = 1;
 pub const __USE_POSIX199309: u32 = 1;
@@ -518,7 +519,6 @@ pub const __USE_POSIX199506: u32 = 1;
 pub const __USE_XOPEN2K: u32 = 1;
 pub const __USE_XOPEN2K8: u32 = 1;
 pub const _ATFILE_SOURCE: u32 = 1;
-pub const __USE_XOPEN2K24: u32 = 1;
 pub const __WORDSIZE: u32 = 64;
 pub const __WORDSIZE_TIME64_COMPAT32: u32 = 1;
 pub const __SYSCALL_WORDSIZE: u32 = 64;
@@ -537,8 +537,6 @@ pub const __STDC_IEC_559_COMPLEX__: u32 = 1;
 pub const __STDC_IEC_60559_COMPLEX__: u32 = 201404;
 pub const __STDC_ISO_10646__: u32 = 201706;
 pub const __GNU_LIBRARY__: u32 = 6;
-pub const __GLIBC__: u32 = 2;
-pub const __GLIBC_MINOR__: u32 = 43;
 pub const _SYS_CDEFS_H: u32 = 1;
 pub const __glibc_c99_flexarr_available: u32 = 1;
 pub const __LDOUBLE_REDIRECTS_TO_FLOAT128_ABI: u32 = 0;
@@ -690,7 +688,6 @@ pub const EXIT_FAILURE: u32 = 1;
 pub const EXIT_SUCCESS: u32 = 0;
 pub const _ALLOCA_H: u32 = 1;
 pub const _ASSERT_H: u32 = 1;
-pub const __ASSERT_VARIADIC: u32 = 0;
 pub const GS_MAX_TEXTURES: u32 = 8;
 pub const GS_BUILD_MIPMAPS: u32 = 1;
 pub const GS_DYNAMIC: u32 = 2;
@@ -999,8 +996,8 @@ pub const VIDEO_OUTPUT_FAIL: i32 = -2;
 pub const CALL_PARAM_IN: u32 = 1;
 pub const CALL_PARAM_OUT: u32 = 2;
 pub const LIBOBS_API_MAJOR_VER: u32 = 32;
-pub const LIBOBS_API_MINOR_VER: u32 = 1;
-pub const LIBOBS_API_PATCH_VER: u32 = 2;
+pub const LIBOBS_API_MINOR_VER: u32 = 0;
+pub const LIBOBS_API_PATCH_VER: u32 = 4;
 pub const OBS_DATA_PATH: &[u8; 10] = b"share/obs\0";
 pub const OBS_PLUGIN_PATH: &[u8; 16] = b"lib/obs-plugins\0";
 pub const OBS_PLUGIN_DESTINATION: &[u8; 16] = b"lib/obs-plugins\0";
@@ -1399,7 +1396,7 @@ pub struct __pthread_mutex_s {
     pub __nusers: ::std::os::raw::c_uint,
     pub __kind: ::std::os::raw::c_int,
     pub __spins: ::std::os::raw::c_short,
-    pub __glibc_reserved: ::std::os::raw::c_short,
+    pub __elision: ::std::os::raw::c_short,
     pub __list: __pthread_list_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -1418,8 +1415,8 @@ const _: () = {
         [::std::mem::offset_of!(__pthread_mutex_s, __kind) - 16usize];
     ["Offset of field: __pthread_mutex_s::__spins"]
         [::std::mem::offset_of!(__pthread_mutex_s, __spins) - 20usize];
-    ["Offset of field: __pthread_mutex_s::__glibc_reserved"]
-        [::std::mem::offset_of!(__pthread_mutex_s, __glibc_reserved) - 22usize];
+    ["Offset of field: __pthread_mutex_s::__elision"]
+        [::std::mem::offset_of!(__pthread_mutex_s, __elision) - 22usize];
     ["Offset of field: __pthread_mutex_s::__list"]
         [::std::mem::offset_of!(__pthread_mutex_s, __list) - 24usize];
 };
@@ -1443,7 +1440,8 @@ pub struct __pthread_rwlock_arch_t {
     pub __pad4: ::std::os::raw::c_uint,
     pub __cur_writer: ::std::os::raw::c_int,
     pub __shared: ::std::os::raw::c_int,
-    pub __pad1: ::std::os::raw::c_ulong,
+    pub __rwelision: ::std::os::raw::c_schar,
+    pub __pad1: [::std::os::raw::c_uchar; 7usize],
     pub __pad2: ::std::os::raw::c_ulong,
     pub __flags: ::std::os::raw::c_uint,
 }
@@ -1468,8 +1466,10 @@ const _: () = {
         [::std::mem::offset_of!(__pthread_rwlock_arch_t, __cur_writer) - 24usize];
     ["Offset of field: __pthread_rwlock_arch_t::__shared"]
         [::std::mem::offset_of!(__pthread_rwlock_arch_t, __shared) - 28usize];
+    ["Offset of field: __pthread_rwlock_arch_t::__rwelision"]
+        [::std::mem::offset_of!(__pthread_rwlock_arch_t, __rwelision) - 32usize];
     ["Offset of field: __pthread_rwlock_arch_t::__pad1"]
-        [::std::mem::offset_of!(__pthread_rwlock_arch_t, __pad1) - 32usize];
+        [::std::mem::offset_of!(__pthread_rwlock_arch_t, __pad1) - 33usize];
     ["Offset of field: __pthread_rwlock_arch_t::__pad2"]
         [::std::mem::offset_of!(__pthread_rwlock_arch_t, __pad2) - 40usize];
     ["Offset of field: __pthread_rwlock_arch_t::__flags"]
@@ -2326,13 +2326,6 @@ unsafe extern "C" {
     ) -> *mut ::std::os::raw::c_void;
 }
 unsafe extern "C" {
-    pub fn memset_explicit(
-        __s: *mut ::std::os::raw::c_void,
-        __c: ::std::os::raw::c_int,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-unsafe extern "C" {
     pub fn memcmp(
         __s1: *const ::std::os::raw::c_void,
         __s2: *const ::std::os::raw::c_void,
@@ -2645,20 +2638,6 @@ unsafe extern "C" {
         __src: *const ::std::os::raw::c_char,
         __n: ::std::os::raw::c_ulong,
     ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
-    pub fn strlcpy(
-        __dest: *mut ::std::os::raw::c_char,
-        __src: *const ::std::os::raw::c_char,
-        __n: ::std::os::raw::c_ulong,
-    ) -> ::std::os::raw::c_ulong;
-}
-unsafe extern "C" {
-    pub fn strlcat(
-        __dest: *mut ::std::os::raw::c_char,
-        __src: *const ::std::os::raw::c_char,
-        __n: ::std::os::raw::c_ulong,
-    ) -> ::std::os::raw::c_ulong;
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
@@ -3007,15 +2986,6 @@ unsafe extern "C" {
         __param: *mut ::std::os::raw::c_ushort,
         __buffer: *mut drand48_data,
     ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn arc4random() -> __uint32_t;
-}
-unsafe extern "C" {
-    pub fn arc4random_buf(__buf: *mut ::std::os::raw::c_void, __size: usize);
-}
-unsafe extern "C" {
-    pub fn arc4random_uniform(__upper_bound: __uint32_t) -> __uint32_t;
 }
 unsafe extern "C" {
     pub fn malloc(__size: ::std::os::raw::c_ulong) -> *mut ::std::os::raw::c_void;
@@ -11031,13 +11001,10 @@ pub struct obs_encoder_info {
             received_packet: *mut bool,
         ) -> bool,
     >,
-    #[doc = " Audio encoder only: Returns padding, in samples, that must be skipped at the start of the stream."]
-    pub get_priming_samples:
-        ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void) -> u32>,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of obs_encoder_info"][::std::mem::size_of::<obs_encoder_info>() - 184usize];
+    ["Size of obs_encoder_info"][::std::mem::size_of::<obs_encoder_info>() - 176usize];
     ["Alignment of obs_encoder_info"][::std::mem::align_of::<obs_encoder_info>() - 8usize];
     ["Offset of field: obs_encoder_info::id"]
         [::std::mem::offset_of!(obs_encoder_info, id) - 0usize];
@@ -11083,8 +11050,6 @@ const _: () = {
         [::std::mem::offset_of!(obs_encoder_info, encode_texture) - 160usize];
     ["Offset of field: obs_encoder_info::encode_texture2"]
         [::std::mem::offset_of!(obs_encoder_info, encode_texture2) - 168usize];
-    ["Offset of field: obs_encoder_info::get_priming_samples"]
-        [::std::mem::offset_of!(obs_encoder_info, get_priming_samples) - 176usize];
 };
 impl Default for obs_encoder_info {
     fn default() -> Self {
@@ -14918,9 +14883,6 @@ unsafe extern "C" {
     pub fn obs_transition_get_size(transition: *const obs_source_t, cx: *mut u32, cy: *mut u32);
 }
 unsafe extern "C" {
-    pub fn obs_transition_is_active(transition: *mut obs_source_t) -> bool;
-}
-unsafe extern "C" {
     #[doc = " Enables fixed transitions (videos or specific types of transitions that\n are of fixed duration and linearly interpolated"]
     pub fn obs_transition_enable_fixed(
         transition: *mut obs_source_t,
@@ -16029,9 +15991,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " For audio encoders, returns the mixer index"]
     pub fn obs_encoder_get_mixer_index(encoder: *const obs_encoder_t) -> usize;
-}
-unsafe extern "C" {
-    pub fn obs_encoder_get_priming_samples(encoder: *const obs_encoder_t) -> u32;
 }
 unsafe extern "C" {
     #[doc = " Sets the preferred video format for a video encoder.  If the encoder can use\n the format specified, it will force a conversion to that format if the\n obs output format does not match the preferred format.\n\n If the format is set to VIDEO_FORMAT_NONE, will revert to the default\n functionality of converting only when absolutely necessary.\n\n If GPU scaling is enabled, conversion will happen on the GPU."]
