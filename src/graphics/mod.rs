@@ -13,15 +13,22 @@ use obs_sys::{
     gs_color_format_GS_R8, gs_color_format_GS_R8G8, gs_color_format_GS_RG16F,
     gs_color_format_GS_RG32F, gs_color_format_GS_RGBA, gs_color_format_GS_RGBA16,
     gs_color_format_GS_RGBA16F, gs_color_format_GS_RGBA32F, gs_color_format_GS_UNKNOWN,
-    gs_effect_create, gs_effect_destroy, gs_effect_get_param_by_name, gs_effect_get_param_info,
-    gs_effect_param_info, gs_effect_set_next_sampler, gs_effect_set_texture, gs_effect_set_vec2,
-    gs_effect_t, gs_eparam_t, gs_sample_filter, gs_sample_filter_GS_FILTER_ANISOTROPIC,
-    gs_sample_filter_GS_FILTER_LINEAR, gs_sample_filter_GS_FILTER_MIN_LINEAR_MAG_MIP_POINT,
+    gs_draw_sprite_subregion, gs_enable_framebuffer_srgb, gs_effect_create, gs_effect_destroy,
+    gs_effect_get_param_by_name, gs_effect_get_param_info, gs_effect_param_info,
+    gs_effect_set_next_sampler, gs_effect_set_texture, gs_effect_set_texture_srgb,
+    gs_effect_set_vec2, gs_effect_t, gs_effect_update_params,
+    gs_eparam_t, gs_framebuffer_srgb_enabled, gs_get_effect, gs_get_linear_srgb,
+    gs_matrix_pop, gs_matrix_push, gs_matrix_scale3f, gs_matrix_translate3f,
+    gs_sample_filter,
+    gs_sample_filter_GS_FILTER_ANISOTROPIC,
+    gs_sample_filter_GS_FILTER_LINEAR,
+    gs_sample_filter_GS_FILTER_MIN_LINEAR_MAG_MIP_POINT,
     gs_sample_filter_GS_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR,
     gs_sample_filter_GS_FILTER_MIN_MAG_LINEAR_MIP_POINT,
     gs_sample_filter_GS_FILTER_MIN_MAG_POINT_MIP_LINEAR,
     gs_sample_filter_GS_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT,
-    gs_sample_filter_GS_FILTER_MIN_POINT_MAG_MIP_LINEAR, gs_sample_filter_GS_FILTER_POINT,
+    gs_sample_filter_GS_FILTER_MIN_POINT_MAG_MIP_LINEAR,
+    gs_sample_filter_GS_FILTER_POINT,
     gs_sampler_info, gs_samplerstate_create, gs_samplerstate_destroy, gs_samplerstate_t,
     gs_shader_param_type, gs_shader_param_type_GS_SHADER_PARAM_BOOL,
     gs_shader_param_type_GS_SHADER_PARAM_FLOAT, gs_shader_param_type_GS_SHADER_PARAM_INT,
@@ -34,7 +41,7 @@ use obs_sys::{
     gs_texture_map, gs_texture_set_image, gs_texture_t, gs_texture_unmap, obs_allow_direct_render,
     obs_allow_direct_render_OBS_ALLOW_DIRECT_RENDERING,
     obs_allow_direct_render_OBS_NO_DIRECT_RENDERING, obs_enter_graphics, obs_leave_graphics,
-    obs_source_draw, vec2, vec3, vec4, GS_DYNAMIC,
+    obs_source_draw, vec2, vec3, vec4, GS_DYNAMIC, GS_FLIP_V,
 };
 use paste::item;
 use std::{
@@ -542,9 +549,72 @@ impl GraphicsTexture {
         });
     }
 
-    pub fn draw(&self, x: c_int, y: c_int, cx: u32, cy: u32, flip: bool) {
+    pub fn draw(&self, x: c_int, y: c_int, draw_width: u32, draw_height: u32, flip: bool) {
         unsafe {
-            obs_source_draw(self.raw, x, y, cx, cy, flip);
+            obs_source_draw(self.raw, x, y, draw_width, draw_height, flip);
+        }
+    }
+
+    pub fn draw_subregion(&self, x: c_int, y: c_int, x_region: [u32;2], y_region: [u32;2], draw_width: u32, draw_height: u32, flip: bool) {
+        let texture_width = self.width();
+        let texture_height = self.height();
+        let [region_left,region_right] = match x_region {
+          [0,0] => [0,texture_width],
+          [start,0] => [start,texture_width],
+          [0,end] => [0,end.min(texture_width)],
+          [start,end] => [
+            start.min(texture_width),
+            end.min(texture_width),
+          ],
+        };
+        let [region_top,region_bottom] = match y_region {
+          [0,0] => [0,texture_height],
+          [start,0] => [start,texture_height],
+          [0,end] => [0,end.min(texture_height)],
+          [start,end] => [
+            start.min(texture_height),
+            end.min(texture_height),
+          ],
+        };
+        if region_right <= region_left || region_bottom <= region_top {
+          log::error!("draw_subregion(): bad region dimensions, right <= left or bottom <= top");
+          return;
+        }
+        let region_width = region_right - region_left;
+        let region_height = region_bottom - region_top;
+        let draw_width = if draw_width == 0 { region_width } else { draw_width };
+        let draw_height = if draw_height == 0 { region_height } else { draw_height };
+        unsafe {
+          let effect = gs_get_effect();
+          if effect.is_null() { return; }
+          let image = gs_effect_get_param_by_name(
+            effect, b"image\0".as_ptr().cast(),
+          );
+          if image.is_null() { log::error!("no image"); return; }
+          let linear_srgb = gs_get_linear_srgb();
+          let previous_srgb = gs_framebuffer_srgb_enabled();
+          gs_enable_framebuffer_srgb(linear_srgb);
+          if linear_srgb {
+            gs_effect_set_texture_srgb(image, self.raw);
+          } else {
+            gs_effect_set_texture(image, self.raw);
+          }
+          gs_effect_update_params(effect);
+          gs_matrix_push();
+          gs_matrix_translate3f(x as f32, y as f32, 0.0);
+          gs_matrix_scale3f(
+            draw_width as f32 / region_width as f32,
+            draw_height as f32 / region_height as f32,
+            1.0,
+          );
+          gs_draw_sprite_subregion(
+            self.raw,
+            if flip { GS_FLIP_V } else { 0 },
+            region_left, region_top,
+            region_width, region_height
+          );
+          gs_matrix_pop();
+          gs_enable_framebuffer_srgb(previous_srgb);
         }
     }
 
